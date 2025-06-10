@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Dimensions, ScrollView, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import api from "../services/api";
 import { BarChart, LineChart, PieChart } from "react-native-chart-kit"; //Biblioteca de gráfico colunar, de linha e de pizza
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 const Dashboard = () => {
   const [notebookData, setNotebookData] = useState(null);
@@ -20,7 +27,6 @@ const Dashboard = () => {
   const [normalDistribution, setNormalDistribution] = useState([]);
   const [usageTimeSkewness, setUsageTimeSkewness] = useState(null);
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -35,7 +41,6 @@ const Dashboard = () => {
         const convertidoMediana = Number(response.data.medianUsageTime);
         const convertidoMedia = Number(response.data.averageUsageTime);
 
-
         setNotebookData(response.data.mostFrequentDiscipline);
         setAverageUsageTime(convertidoMedia);
         setMedianUsageTime(convertidoMediana);
@@ -44,67 +49,68 @@ const Dashboard = () => {
         setWithdrawalsByCourse(response.data.withdrawalsByCourse || []);
         setWithdrawalsByPeriod(response.data.withdrawalsByPeriod || []);
         setTop5LongestUsage(response.data.top5LongestAverageUsage || []);
-        setDailyWithdrawalsLastWeek(response.data.dailyWithdrawalsLastWeek || []);
+        setDailyWithdrawalsLastWeek(
+          response.data.dailyWithdrawalsLastWeek || []
+        );
         setWithdrawalForecast(response.data.withdrawalForecast || []);
         setNormalDistribution(response.data.normalDistribution || []);
         setUsageTimeSkewness(response.data.usageTimeSkewness || null);
-
       } catch (error) {
         console.error("Erro ao buscar dados do dashboard:", error);
       }
     };
     fetchData();
   }, []);
-  
-  const formatForecastDate = (dateString) => {
-    const date = new Date(dateString);
-    const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    const dayOfWeek = days[date.getDay()];
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    return `${dayOfWeek}-${day}/${month}`; 
-  };
 
   const filterNext5Days = (forecastData) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Remove a hora para comparar apenas a data
-    
-    return forecastData.filter(item => {
-      const itemDate = new Date(item.next_date);
-      itemDate.setHours(0, 0, 0, 0);
-      
-      // Calcula a diferença em dias
-      const diffTime = itemDate - today;
-      const diffDays = diffTime / (1000 * 60 * 60 * 24);
-      
-      // Mantém apenas os próximos 5 dias 
-      return diffDays >= 0 && diffDays < 6;
-    });
+    // Pega a data atual no formato YYYY-MM-DD para comparação exata
+    const today = new Date().toISOString().split("T")[0];
+
+    // Encontra o índice do dia atual no array
+    const todayIndex = forecastData.findIndex(
+      (item) => item.next_date === today
+    );
+
+    // Se não encontrar o dia atual, começa do primeiro item
+    const startIndex = todayIndex >= 0 ? todayIndex : 0;
+
+    // Retorna os próximos 5 dias a partir do dia atual (incluindo o atual)
+    return forecastData.slice(startIndex, startIndex + 7);
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Estatística</Text>
+      <Text style={styles.title}>Smartlocker Insights</Text>
 
       {notebookData ? (
         <>
-        <View style={styles.tableContainer}>
+          <View style={styles.tableContainer}>
             <Text style={styles.tableTitle}>Notebooks não devolvidos</Text>
             {unreturnedNotebooks.length === 0 ? (
-              <Text style={styles.tableTitle}>Nenhum notebook pendente de devolução.</Text>
+              <Text style={styles.tableTitle}>
+                Nenhum notebook pendente de devolução.
+              </Text>
             ) : (
               <View style={styles.table}>
                 <View style={styles.tableRowHeader}>
-                  <Text style={[styles.tableCell, styles.headerText]}>Notebook</Text>
-                  <Text style={[styles.tableCell, styles.headerText]}>Disciplina</Text>
-                  <Text style={[styles.tableCell, styles.headerText]}>Retirado em</Text>
+                  <Text style={[styles.tableCell, styles.headerText]}>
+                    Notebook
+                  </Text>
+                  <Text style={[styles.tableCell, styles.headerText]}>
+                    Disciplina
+                  </Text>
+                  <Text style={[styles.tableCell, styles.headerText]}>
+                    Retirado em
+                  </Text>
                 </View>
 
                 {unreturnedNotebooks.map((item, index) => (
                   <View key={index} style={styles.tableRow}>
                     <Text style={styles.tableCell}>{item.device_name}</Text>
                     <Text style={styles.tableCell}>{item.discipline}</Text>
-                    <Text style={styles.tableCell}>{item.checkout_datetime}</Text>
+                    <Text style={styles.tableCell}>
+                      {item.checkout_datetime}
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -112,7 +118,9 @@ const Dashboard = () => {
           </View>
           <View style={styles.row}>
             <View style={styles.card}>
-              <Text style={styles.label}>Disciplina com maior número de retiradas  de notebooks</Text>
+              <Text style={styles.label}>
+                Disciplina com maior número de retiradas de notebooks
+              </Text>
               <Text style={styles.value}>{notebookData.disciplineName}</Text>
 
               <Text style={styles.label}>Dia da disciplina</Text>
@@ -125,42 +133,46 @@ const Dashboard = () => {
             <View style={styles.card}>
               <Text style={styles.label}>Tempo médio de uso</Text>
               <Text style={styles.value}>
-                {typeof averageUsageTime === 'number'
+                {typeof averageUsageTime === "number"
                   ? `${averageUsageTime.toFixed(1)} minutos`
-                  : 'N/A minutos'}
+                  : "N/A minutos"}
               </Text>
             </View>
           </View>
 
           <View style={styles.row}>
             <View style={styles.card}>
-              <Text style={styles.label}>Mediana de tempo de uso por retirada</Text>
+              <Text style={styles.label}>
+                Mediana de tempo de uso por retirada
+              </Text>
               <Text style={styles.value}>
-                {typeof medianUsageTime === 'number'
+                {typeof medianUsageTime === "number"
                   ? `${medianUsageTime.toFixed(1)} minutos`
-                  : 'N/A minutos'}
+                  : "N/A minutos"}
               </Text>
             </View>
 
             <View style={styles.card}>
               <Text style={styles.label}>Desvio padrão do tempo de uso</Text>
               <Text style={styles.value}>
-                {usageTimeStdDev && typeof usageTimeStdDev.standardDeviation === 'number'
+                {usageTimeStdDev &&
+                typeof usageTimeStdDev.standardDeviation === "number"
                   ? `${usageTimeStdDev.standardDeviation.toFixed(1)} minutos`
-                  : 'N/A minutos'}
+                  : "N/A minutos"}
               </Text>
             </View>
-            
           </View>
 
           {usageTimeSkewness && (
             <View style={[styles.card, { marginBottom: 24 }]}>
-              <Text style={styles.labelAssimetria}>Assimetria do Tempo de Uso</Text>
+              <Text style={styles.labelAssimetria}>
+                Assimetria do Tempo de Uso
+              </Text>
 
               <Text style={styles.value}>
                 {usageTimeSkewness.skewness !== null
                   ? usageTimeSkewness.skewness.toFixed(3)
-                  : 'N/A'}
+                  : "N/A"}
               </Text>
 
               <Text style={styles.label}>
@@ -171,23 +183,36 @@ const Dashboard = () => {
 
           {top5LongestUsage.length > 0 && (
             <View style={styles.chartContainer}>
-              <Text style={styles.chartTitle}>Top 5 Notebooks por Tempo Médio de Uso</Text>
+              <Text style={styles.chartTitle}>
+                Top 5 Notebooks por Tempo Médio de Uso
+              </Text>
 
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View style={{ transform: [{ rotate: '-90deg' }], position: 'absolute', left: -62, top: 135 }}>
-                  <Text style={{ color: '#fff', fontSize: 12 }}>Tempo de Uso (min)</Text>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <View
+                  style={{
+                    transform: [{ rotate: "-90deg" }],
+                    position: "absolute",
+                    left: -65,
+                    top: 135,
+                  }}
+                >
+                  <Text style={{ color: "#fff", fontSize: 12 }}>
+                    Tempo de Uso (min)
+                  </Text>
                 </View>
 
                 <BarChart
                   data={{
-                    labels: top5LongestUsage.map(item => item.notebookName),
+                    labels: top5LongestUsage.map((item) => item.notebookName),
                     datasets: [
                       {
-                        data: top5LongestUsage.map(item => item.averageUsageTimeMinutes),
+                        data: top5LongestUsage.map(
+                          (item) => item.averageUsageTimeMinutes
+                        ),
                       },
                     ],
                   }}
-                  width={width - 40}
+                  width={width - 20}
                   height={300}
                   yAxisLabel=""
                   xAxisSuffix=" min"
@@ -217,94 +242,119 @@ const Dashboard = () => {
                   horizontal={true}
                 />
               </View>
-              <View style={{ alignItems: 'center', marginTop: 4 }}>
-                <Text style={{ color: '#fff', fontSize: 12 }}>Notebooks</Text>
+              <View style={{ alignItems: "center", marginTop: 4 }}>
+                <Text style={{ color: "#fff", fontSize: 12 }}>Notebooks</Text>
               </View>
             </View>
-          )}     
+          )}
 
           {normalDistribution && normalDistribution.length > 0 && (
             <View style={styles.chartContainer}>
-              <Text style={styles.chartTitle}>Distribuição Normal do Tempo de Uso</Text>
-                <View style={{ transform: [{ rotate: '-90deg' }], position: 'absolute', left: -75, top: 135 }}>
-                  <Text style={{ color: '#fff', fontSize: 12 }}>Densidade de Probabilidade</Text>
-                </View>
-                <LineChart
-                  data={{
-                    labels: normalDistribution.map((item, index) =>
-                      index % 5 === 0 ? item.x.toString() : '' 
-                    ),
-                    datasets: [
-                      {
-                        data: normalDistribution.map(item => item.y),
-                        color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`, 
-                        strokeWidth: 3,
-                      }
-                    ]
-                  }}
-                  width={width - 40}
-                  height={300}
-                  yAxisSuffix=""
-                  yAxisInterval={1}
-                  xAxisInterval={1}
-                  chartConfig={{
-                    backgroundColor: "#1E1E1E",
-                    backgroundGradientFrom: "#1E1E1E",
-                    backgroundGradientTo: "#1E1E1E",
-                    decimalPlaces: 5,
-                    color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`,
-                    labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                    fillShadowGradient: `rgba(33, 150, 243, 0.2)`,
-                    fillShadowGradientOpacity: 1,
-                    propsForDots: {
-                      r: "0", 
+              <Text style={styles.chartTitle}>
+                Distribuição Normal do Tempo de Uso
+              </Text>
+              <View
+                style={{
+                  transform: [{ rotate: "-90deg" }],
+                  position: "absolute",
+                  left: -65,
+                  top: 135,
+                }}
+              >
+                <Text style={{ color: "#fff", fontSize: 10 }}>
+                  Densidade de Probabilidade
+                </Text>
+              </View>
+              <LineChart
+                data={{
+                  labels: normalDistribution.map((item, index) =>
+                    index % 3 === 0 ? item.x.toString() : ""
+                  ),
+                  datasets: [
+                    {
+                      data: normalDistribution.map((item) => item.y),
+                      color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`,
+                      strokeWidth: 3,
                     },
-                    propsForBackgroundLines: {
-                      stroke: "#444",
-                    },
-                  }}
-                  bezier
+                  ],
+                }}
+                width={width - 60}
+                height={300}
+                yAxisSuffix=""
+                yAxisInterval={1}
+                xAxisInterval={1}
+                chartConfig={{
+                  backgroundColor: "#1E1E1E",
+                  backgroundGradientFrom: "#1E1E1E",
+                  backgroundGradientTo: "#1E1E1E",
+                  decimalPlaces: 5,
+                  color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`,
+                  labelColor: (opacity = 1) =>
+                    `rgba(255, 255, 255, ${opacity})`,
+                  fillShadowGradient: `rgba(33, 150, 243, 0.2)`,
+                  fillShadowGradientOpacity: 1,
+                  propsForDots: {
+                    r: "0",
+                  },
+                  propsForBackgroundLines: {
+                    stroke: "#444",
+                  },
+                }}
+                bezier
+                style={{
+                  marginVertical: 8,
+                  borderRadius: 16,
+                }}
+                withDots={false}
+                withInnerLines={true}
+                withOuterLines={true}
+                fromZero={true}
+                segments={6}
+              />
+              <View style={{ alignItems: "center", marginTop: -20 }}>
+                <Text style={{ color: "#fff", fontSize: 12 }}>
+                  Tempo de Uso(Minutos)
+                </Text>
+              </View>
+            </View>
+          )}
+
+          {normalDistribution && normalDistribution.length > 0 && (
+            <View style={styles.chartContainer}>
+              <Text style={styles.chartTitle}>
+                Probabilidade Acumulada de Duração
+              </Text>
+
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <View
                   style={{
-                    marginVertical: 8,
-                    borderRadius: 16,
+                    transform: [{ rotate: "-90deg" }],
+                    position: "absolute",
+                    left: -85,
+                    top: 135,
                   }}
-                  withDots={false}
-                  withInnerLines={true}
-                  withOuterLines={true}
-                  fromZero={true}
-                  segments={5}
-                />
-              <View style={{ alignItems: 'center', marginTop: -20}}>
-                <Text style={{ color: '#fff', fontSize: 12 }}>Tempo de Uso(Minutos)</Text>
-              </View>
-            </View>
-          )} 
-
-          {normalDistribution && normalDistribution.length > 0 && (
-            <View style={styles.chartContainer}>
-              <Text style={styles.chartTitle}>Probabilidade Acumulada de Duração</Text>
-
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View style={{ transform: [{ rotate: '-90deg' }], position: 'absolute', left: -75, top: 135 }}>
-                  <Text style={{ color: '#fff', fontSize: 12 }}>Probabilidade Acumulada</Text>
+                >
+                  <Text style={{ color: "#fff", fontSize: 12 }}>
+                    Probabilidade Acumulada
+                  </Text>
                 </View>
 
                 <LineChart
                   data={{
                     labels: normalDistribution.map((item, index) =>
-                      index % 5 === 0 ? item.x.toString() : ''
+                      index % 3 === 0 ? item.x.toString() : ""
                     ),
                     datasets: [
                       {
-                        data: normalDistribution.map(item =>
-                          (item.cumulative * 100).toFixed(2) // converte para %
+                        data: normalDistribution.map(
+                          (item) => (item.cumulative * 100).toFixed(2) // converte para %
                         ),
                         color: (opacity = 1) => `rgba(3,255, 247, ${opacity})`,
                         strokeWidth: 2,
                       },
                     ],
                   }}
-                  width={width - 40}
+                  width={width - 60}
                   height={300}
                   yAxisSuffix="%"
                   yAxisInterval={1}
@@ -314,7 +364,8 @@ const Dashboard = () => {
                     backgroundGradientTo: "#1E1E1E",
                     decimalPlaces: 2,
                     color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`,
-                    labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                    labelColor: (opacity = 1) =>
+                      `rgba(255, 255, 255, ${opacity})`,
                     propsForDots: {
                       r: "2",
                     },
@@ -334,8 +385,10 @@ const Dashboard = () => {
                   }}
                 />
               </View>
-              <View style={{ alignItems: 'center', marginTop: -20 }}>
-                <Text style={{ color: '#fff', fontSize: 12 }}>Tempo de Uso(Minutos)</Text>
+              <View style={{ alignItems: "center", marginTop: -20 }}>
+                <Text style={{ color: "#fff", fontSize: 12 }}>
+                  Tempo de Uso(Minutos)
+                </Text>
               </View>
             </View>
           )}
@@ -343,9 +396,18 @@ const Dashboard = () => {
           {withdrawalsByCourse.length > 0 && (
             <View style={styles.chartContainer}>
               <Text style={styles.chartTitle}>Retiradas por Curso</Text>
-                <View style={{ transform: [{ rotate: '-90deg' }], position: 'absolute', left: -45, top: 135 }}>
-                  <Text style={{ color: '#fff', fontSize: 12 }}>Qtd de Retiradas</Text>
-                </View>
+              <View
+                style={{
+                  transform: [{ rotate: "-90deg" }],
+                  position: "absolute",
+                  left: -45,
+                  top: 135,
+                }}
+              >
+                <Text style={{ color: "#fff", fontSize: 12 }}>
+                  Qtd de Retiradas
+                </Text>
+              </View>
 
               <BarChart
                 data={{
@@ -356,7 +418,7 @@ const Dashboard = () => {
                     },
                   ],
                 }}
-                width={width - 40}
+                width={width - 60}
                 height={220}
                 yAxisLabel=""
                 fromZero
@@ -367,7 +429,8 @@ const Dashboard = () => {
                   backgroundGradientTo: "#1E1E1E",
                   decimalPlaces: 0,
                   color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`,
-                  labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                  labelColor: (opacity = 1) =>
+                    `rgba(255, 255, 255, ${opacity})`,
                   style: {
                     borderRadius: 16,
                   },
@@ -380,11 +443,10 @@ const Dashboard = () => {
                   borderRadius: 16,
                 }}
               />
-              <View style={{ alignItems: 'center', marginTop: -20 }}>
-                <Text style={{ color: '#fff', fontSize: 12 }}>Cursos</Text>
+              <View style={{ alignItems: "center", marginTop: -20 }}>
+                <Text style={{ color: "#fff", fontSize: 12 }}>Cursos</Text>
               </View>
             </View>
-
           )}
 
           {withdrawalsByPeriod.length > 0 && (
@@ -398,7 +460,7 @@ const Dashboard = () => {
                   legendFontColor: "#fff",
                   legendFontSize: 12,
                 }))}
-                width={width - 40}
+                width={width - 60}
                 height={220}
                 chartConfig={{
                   color: () => `#fff`,
@@ -413,22 +475,37 @@ const Dashboard = () => {
 
           {dailyWithdrawalsLastWeek.length > 0 && (
             <View style={styles.chartContainer}>
-              <Text style={styles.chartTitle}>Retiradas Diárias na Última Semana</Text>
-                <View style={{ transform: [{ rotate: '-90deg' }], position: 'absolute', left: -42, top: 175 }}>
-                  <Text style={{ color: '#fff', fontSize: 12 }}>Qtd de Retiradas</Text>
-                </View>
+              <Text style={styles.chartTitle}>
+                Retiradas Diárias na Última Semana
+              </Text>
+              <View
+                style={{
+                  transform: [{ rotate: "-90deg" }],
+                  position: "absolute",
+                  left: -45,
+                  top: 175,
+                }}
+              >
+                <Text style={{ color: "#fff", fontSize: 12 }}>
+                  Qtd de Retiradas
+                </Text>
+              </View>
               <BarChart
                 data={{
-                  labels: dailyWithdrawalsLastWeek.map(item =>
-                    item.day.slice(0, 3).charAt(0).toUpperCase() + item.day.slice(1, 3)
+                  labels: dailyWithdrawalsLastWeek.map(
+                    (item) =>
+                      item.day.slice(0, 3).charAt(0).toUpperCase() +
+                      item.day.slice(1, 3)
                   ),
                   datasets: [
                     {
-                      data: dailyWithdrawalsLastWeek.map(item => item.total_withdrawals),
+                      data: dailyWithdrawalsLastWeek.map(
+                        (item) => item.total_withdrawals
+                      ),
                     },
                   ],
                 }}
-                width={width - 40}
+                width={width - 60}
                 height={300}
                 yAxisLabel=""
                 yAxisSuffix=""
@@ -438,7 +515,8 @@ const Dashboard = () => {
                   backgroundGradientTo: "#1E1E1E",
                   decimalPlaces: 0,
                   color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`,
-                  labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                  labelColor: (opacity = 1) =>
+                    `rgba(255, 255, 255, ${opacity})`,
                   style: {
                     borderRadius: 16,
                   },
@@ -459,32 +537,50 @@ const Dashboard = () => {
                   borderRadius: 16,
                 }}
               />
-              <View style={{ alignItems: 'center', marginTop: -20 }}>
-                <Text style={{ color: '#fff', fontSize: 12 }}>Dias da Semana</Text>
+              <View style={{ alignItems: "center", marginTop: -20 }}>
+                <Text style={{ color: "#fff", fontSize: 12 }}>
+                  Dias da Semana
+                </Text>
               </View>
             </View>
           )}
 
           {withdrawalForecast.length > 0 && (
             <View style={styles.chartContainer}>
-              <Text style={styles.chartTitle}>Previsão de Retiradas para os Próximos Dias</Text>
+              <Text style={styles.chartTitle}>
+                Previsão de Retiradas para os Próximos Dias
+              </Text>
 
-              <View style={{ transform: [{ rotate: '-90deg' }], position: 'absolute', left: -42, top: 175 }}>
-                <Text style={{ color: '#fff', fontSize: 12 }}>Qtd de Retiradas</Text>
+              <View
+                style={{
+                  transform: [{ rotate: "-90deg" }],
+                  position: "absolute",
+                  left: -46,
+                  top: 175,
+                }}
+              >
+                <Text style={{ color: "#fff", fontSize: 12 }}>
+                  Qtd de Retiradas
+                </Text>
               </View>
 
               <LineChart
                 data={{
-                  labels: filterNext5Days(withdrawalForecast).map(item => formatForecastDate(item.next_date)),
+                  labels: filterNext5Days(withdrawalForecast).map((item) => {
+                    const [year, month, day] = item.next_date.split("-");
+                    return `${day}-${month}`;
+                  }),
                   datasets: [
                     {
-                      data: filterNext5Days(withdrawalForecast).map(item => item.estimated_quantity),
-                      strokeWidth:2, // grossura da linha
+                      data: filterNext5Days(withdrawalForecast).map(
+                        (item) => item.estimated_quantity
+                      ),
+                      strokeWidth: 2, // grossura da linha
                       color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`, // linha em amarelo
                     },
-                  ]
+                  ],
                 }}
-                width={width - 40}
+                width={width - 60}
                 height={320}
                 yAxisLabel=""
                 yAxisSuffix=""
@@ -494,7 +590,8 @@ const Dashboard = () => {
                   backgroundGradientTo: "#1E1E1E",
                   decimalPlaces: 0,
                   color: (opacity = 1) => `rgba(33, 150, 243,${opacity})`,
-                  labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                  labelColor: (opacity = 1) =>
+                    `rgba(255, 255, 255, ${opacity})`,
                   style: {
                     borderRadius: 16,
                   },
@@ -515,20 +612,21 @@ const Dashboard = () => {
                 }}
               />
 
-              <View style={{ alignItems: 'center', marginTop: -5 }}>
-                <Text style={{ color: '#fff', fontSize: 12 }}>Dias da Semana</Text>
+              <View style={{ alignItems: "center", marginTop: -5 }}>
+                <Text style={{ color: "#fff", fontSize: 12 }}>
+                  Dias da Semana
+                </Text>
               </View>
             </View>
           )}
         </>
       ) : (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#2196F3" />
-        <Text style={styles.loadingText}>Carregando dados...</Text>
-      </View>
-    )}
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#2196F3" />
+          <Text style={styles.loadingText}>Carregando dados...</Text>
+        </View>
+      )}
     </ScrollView>
-
   );
 };
 
@@ -579,12 +677,12 @@ const styles = StyleSheet.create({
     color: "#e0e0e0",
     marginBottom: 5,
   },
-  labelAssimetria:{
+  labelAssimetria: {
     fontSize: 15,
-    color:"#fff",
+    color: "#fff",
     marginBottom: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     fontWeight: "bold",
   },
   value: {
@@ -594,14 +692,14 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingTop: 85,
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#fff',
+    color: "#fff",
   },
   row: {
     flexDirection: "row",
@@ -666,7 +764,7 @@ const styles = StyleSheet.create({
     color: "#A0A0A0",
     fontSize: 10,
     marginTop: 5,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
 });
 
