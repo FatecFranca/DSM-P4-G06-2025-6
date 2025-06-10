@@ -76,5 +76,4 @@ A aplicação consome dados da seguinte API:
 ```
 
 📝 Observações<br>
-    - Certifique-se de estar na mesma rede do backend para acessar a API.<br>
-    - O projeto utiliza Expo, facilitando o desenvolvimento e testes em dispositivos reais.
+    - Certifique-se de estar na mesma rede do backend para acessar a API.
