@@ -8,8 +8,8 @@
 #define SS_PIN  21
 #define RST_PIN 22
 
-const char* ssid = "GATOLANDIA";
-const char* password = "@Casa3gatos";
+const char* ssid = "sua rede wifi"; // altere para os dados da sua rede wi-fi
+const char* password = "senha";
 const char* apiURL = "http://20.57.55.218:5000/smartlocker/api/v1/nfc-capture"; // Substitua pelo IP real
 
 MFRC522 rfid(SS_PIN, RST_PIN);
