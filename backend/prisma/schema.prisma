@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model cabinets {
+  id        Int         @id @default(autoincrement())
+  name      String      @db.VarChar(255)
+  room_id   Int
+  rooms     rooms       @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cabinets_ibfk_1")
+  notebooks notebooks[]
+
+  @@index([room_id], map: "room_id")
+}
+
+model courses {
+  id          Int            @id @default(autoincrement())
+  short_name  String         @db.VarChar(255)
+  course_name String         @db.VarChar(255)
+  period      courses_period
+  schedules   schedules[]
+}
+
+model movements {
+  id                Int       @id @default(autoincrement())
+  notebook_id       Int
+  checkout_datetime DateTime  @db.DateTime(0)
+  return_datetime   DateTime? @db.DateTime(0)
+  schedule_id       Int
+  room_id           Int
+  notebooks         notebooks @relation(fields: [notebook_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "movements_ibfk_1")
+  schedules         schedules @relation(fields: [schedule_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "movements_ibfk_2")
+  rooms             rooms     @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "movements_ibfk_3")
+
+  @@index([notebook_id], map: "notebook_id")
+  @@index([room_id], map: "room_id")
+  @@index([schedule_id], map: "schedule_id")
+}
+
+model nfc_capture {
+  id       Int      @id @default(autoincrement())
+  nfc_tag  String   @db.VarChar(255)
+  datetime DateTime @db.DateTime(0)
+}
+
+model notebooks {
+  id            Int         @id @default(autoincrement())
+  nfc_tag       String      @db.VarChar(255)
+  device_name   String      @db.VarChar(255)
+  serial_number String      @db.VarChar(255)
+  cabinet_id    Int
+  movements     movements[]
+  cabinets      cabinets    @relation(fields: [cabinet_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "notebooks_ibfk_1")
+
+  @@index([cabinet_id], map: "cabinet_id")
+}
+
+model rooms {
+  id        Int         @id @default(autoincrement())
+  name      String      @db.VarChar(255)
+  location  String      @db.VarChar(255)
+  cabinets  cabinets[]
+  movements movements[]
+  schedules schedules[]
+}
+
+model schedules {
+  id          Int         @id @default(autoincrement())
+  course_id   Int
+  room_id     Int
+  day_of_week String      @db.VarChar(20)
+  discipline  String      @db.VarChar(255)
+  start_time  DateTime    @db.Time(0)
+  end_time    DateTime    @db.Time(0)
+  movements   movements[]
+  courses     courses     @relation(fields: [course_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "schedules_ibfk_1")
+  rooms       rooms       @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "schedules_ibfk_2")
+
+  @@index([course_id], map: "course_id")
+  @@index([room_id], map: "room_id")
+}
+
+model users {
+  id        Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  name      String   @db.VarChar(255)
+  email     String   @unique(map: "email_UNIQUE") @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  createdAt DateTime @default(now()) @db.DateTime(0)
+}
+
+enum courses_period {
+  Matutino
+  Noturno
+}
