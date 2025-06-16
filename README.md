@@ -56,13 +56,13 @@ Para web:
 4. **Abra o app no seu dispositivo:**
    - Use o aplicativo Expo Go para escanear o QR code exibido no terminal ou navegador.
 
-🌐 Link da API Backend
+ ## 🌐 Link da API Backend
 A aplicação consome dados da seguinte API:
    ```
    http://20.57.55.218:5000/smartlocker/api/v1
 ```
 
-📁 Estrutura básica
+## 📁 Estrutura básica
    ```
     App.js
     src/
@@ -75,5 +75,46 @@ A aplicação consome dados da seguinte API:
     routes.js
 ```
 
-📝 Observações<br>
-    - Certifique-se de estar na mesma rede do backend para acessar a API.
+## 📱 Telas
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/Fredericobarbosa/smartlocker_frontend_mobile/blob/main/img/Tela-login.jpeg" alt="Tela de Login"  width="250"><br/>
+      <sub>Tela de Login</sub>
+    </td>
+    <td align="center">
+      <img src="https://github.com/Fredericobarbosa/smartlocker_frontend_mobile/blob/main/img/Tela-cadastro.jpeg" alt="Tela de Cadastro"  width="250"/><br/>
+      <sub>Tela de Cadastro</sub>
+    </td>
+    <td align="center">
+      <img src="https://github.com/Fredericobarbosa/smartlocker_frontend_mobile/blob/main/img/Dashboard1.jpeg" alt="Dashboard"  width="250"/><br/>
+      <sub>Dashboard</sub>
+    </td>
+    <td align="center">
+      <img src="https://github.com/Fredericobarbosa/smartlocker_frontend_mobile/blob/main/img/Dashboard2.jpeg" alt="Dashboard"  width="250"><br/>
+      <sub>Dashboard</sub>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/Fredericobarbosa/smartlocker_frontend_mobile/blob/main/img/Dashboard3.jpeg" alt="Dashboard"  width="250"><br/>
+      <sub>Dashboard</sub>
+    </td>
+    <td align="center">
+      <img src="https://github.com/Fredericobarbosa/smartlocker_frontend_mobile/blob/main/img/Dashboard4.jpeg" alt="Dashboard"  width="250"/><br/>
+      <sub>Dashboard</sub>
+    </td>
+    <td align="center">
+      <img src="https://github.com/Fredericobarbosa/smartlocker_frontend_mobile/blob/main/img/Dashboard5.jpeg" alt="Dashboard"  width="250"/><br/>
+      <sub>Dashboard</sub>
+    </td>
+  </tr>
+</table>
+
+## 📝 Observações
+    - Certifique-se de estar na mesma rede para que possa emular a aplicação no Expo caso for utilizar o aplicativo no celular.
+    - Caso a API não esteje dando retorno/funcionando a VM criada na Azure pode estar desativada por conta de cobranças relacionadas
+      aos serviços de hospedagem.
