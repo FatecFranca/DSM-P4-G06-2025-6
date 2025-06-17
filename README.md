@@ -22,9 +22,6 @@
 
 - **victory**: Biblioteca de gráficos utilizada para exibir estatísticas e visualizações no dashboard, como gráficos de barras, linhas, área e pizza.
 
-- **chart.js** e **react-chartjs-2**: Disponíveis para gráficos, mas atualmente os gráficos principais do dashboard utilizam a biblioteca Victory.
-
-
 ## 🚀 Como iniciar o projeto
 
 1. **Pré-requisitos:**  
