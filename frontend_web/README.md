@@ -22,9 +22,6 @@
 
 - **victory**: Biblioteca de gráficos utilizada para exibir estatísticas e visualizações no dashboard, como gráficos de barras, linhas, área e pizza.
 
-- **chart.js** e **react-chartjs-2**: Disponíveis para gráficos, mas atualmente os gráficos principais do dashboard utilizam a biblioteca Victory.
-
-
 ## 🚀 Como iniciar o projeto
 
 1. **Pré-requisitos:**  
@@ -64,7 +61,44 @@ A aplicação consome dados da seguinte API:
 - `src/routes.js` — Rotas da aplicação
 - `src/assets/` — Imagens e logos
 
+## 🖥️ Telas
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/Fredericobarbosa/smartlocker_frontend_web/blob/main/img/Tela%20de%20Login.jpeg" width="700"/><br/>
+      <sub>Tela de Login</sub>
+    </td>
+    <td align="center">
+      <img src="https://github.com/Fredericobarbosa/smartlocker_frontend_web/blob/main/img/Tela%20de%20Cadastro.jpeg" width="700"/><br/>
+      <sub>Tela de Cadastro</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/Fredericobarbosa/smartlocker_frontend_web/blob/main/img/Dashboard1.jpeg" width="700"/><br/>
+      <sub>Dashboard</sub>
+    </td>
+    <td align="center">
+      <img src="https://github.com/Fredericobarbosa/smartlocker_frontend_web/blob/main/img/Dashboard2.jpeg" width="700"/><br/>
+      <sub>Dashboard</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/Fredericobarbosa/smartlocker_frontend_web/blob/main/img/Dashboard3.jpeg" width="700"/><br/>
+      <sub>Dashboard</sub>
+    </td>
+    <td align="center">
+      <img src="https://github.com/Fredericobarbosa/smartlocker_frontend_web/blob/main/img/Dashboard4.jpeg" width="700"/><br/>
+      <sub>Dashboard</sub>
+    </td>
+  </tr>
+</table>
+
+
 ## 📝 Observações<br>
 - O projeto utiliza variáveis de ambiente para definir a URL da API.<br>
 - O login utiliza JWT armazenado no localStorage.<br>
 - O dashboard exibe dados estatísticos e gráficos baseados nas informações retornadas pela API.
+- Caso a API não esteje dando retorno/funcionando a VM criada na Azure pode estar desativada por conta de cobranças relacionadas
+  aos serviços de hospedagem.
